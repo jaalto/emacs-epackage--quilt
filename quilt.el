@@ -35,9 +35,9 @@
   "check if the current buffer is quilt controlled"
   (if (not fn)
       nil
-    (let* ((pd (file-name-nondirectory 
+    (let* ((pd (file-name-nondirectory
 		(directory-file-name (file-name-directory fn)))))
-      (and 
+      (and
        (not (string-match "\\(~$\\|\\.rej$\\)" fn))
        (not (equal pd "patches"))
        (not (equal pd ".pc"))
@@ -106,7 +106,7 @@
   (interactive)
   (defvar quilt-mode-line nil)
   (make-variable-buffer-local 'quilt-mode-line)
-  (setq quilt-mode-line 
+  (setq quilt-mode-line
 	(concat " Q:" (quilt-short-patchname)))
   (force-mode-line-update))
 
@@ -284,9 +284,9 @@
 \\{quilt-mode-map}
 "
   (interactive "p")
-  (setq quilt-mode 
-	(if (null arg) 
-	    (not quilt-mode) 
+  (setq quilt-mode
+	(if (null arg)
+	    (not quilt-mode)
 	  (> (prefix-numeric-value arg) 0)))
   (if quilt-mode
       (let* ((f buffer-file-name))
@@ -300,12 +300,9 @@
   "Enable quilt mode for quilt-controlled files."
   (if (quilt-p) (quilt-mode 1)))
 
-(add-hook 'find-file-hooks 'quilt-hook)
-(add-hook 'after-revert-hook 'quilt-hook)
-
 (or (assq 'quilt-mode minor-mode-alist)
     (setq minor-mode-alist
-	  (cons '(quilt-mode quilt-mode-line) minor-mode-alist)))  
+	  (cons '(quilt-mode quilt-mode-line) minor-mode-alist)))
 
 (or (assq 'quilt-mode-map minor-mode-map-alist)
     (setq minor-mode-map-alist
