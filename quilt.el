@@ -1,12 +1,45 @@
-;;; quilt.el v0.4 - a minor mode for working with files in quilt
-;;; http://selenic.com/quilt/
-;;;
-;;; Copyright 2005  Matt Mackall <mpm@selenic.com>
-;;;
-;;; This software may be used and distributed according to the terms
-;;; of the GNU General Public License, incorporated herein by reference.
-;;;
-;;; Usage: add (load "~/quilt.el") to your .emacs file
+;;; quilt.el --- a minor mode for working with files in quilt
+
+;; This file is not part of Emacs
+
+;; Copyright (C) 2011 Jari Aalto <jari.aalto@cante.net>
+;; Copyright (C) 2005 Matt Mackall <mpm@selenic.com>
+
+;; Author:	Matt Mackall <mpm@selenic.com>
+;; Maintainer:	Jari Aalto <jari.aalto@cante.net>
+;; Version:	0.4.1
+;; Keywords:	extensions
+;; URL:
+
+;; This program is free software; you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the Free
+;; Software Foundation; either version 2 of the License, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+;; or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+;; for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program. If not, see <http://www.gnu.org/licenses/>.
+;;
+;; Visit <http://www.gnu.org/copyleft/gpl.html> for more information.
+
+;; This software may be used and distributed according to the terms
+;; of the GNU General Public License, incorporated herein by reference.
+;;
+;;; Commentary:
+;;
+;; Usage: add (load "~/quilt.el") to your .emacs file.
+;;
+;;; History:
+;;
+;;  0.4.1 2011 Jari Aalto <jari.aato@cante.net>
+;;        - Fix nested defuns and lm-mnt.el QA issues in header.
+;;  0.4   2005 Matt Mackall <mpm@selenic.com>
+;;
+;;; Code:
 
 (defun quilt-find-dir (fn)
   "find the top level dir for quilt from fn"
