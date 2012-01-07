@@ -67,31 +67,35 @@
   (split-string (quilt-cmd-to-string "series") "\n"))
 
 (defun quilt-top-patch ()
-  (let* ((top (quilt-cmd-to-string "top")))
+  (let ((top (quilt-cmd-to-string "top")))
     (if (equal top "")
 	nil
 	(substring top 0 -1))))
 
+(defun quilt-to-alist (list n)		;
+  (if list
+      (cons (cons (car list) n)
+	    (quilt-to-alist (cdr list) (+ 1 n)))
+    nil))
+
 (defun quilt-complete-list (p l)
-  (defun to-alist (list n)
-    (if list
-	(cons (cons (car list) n)
-	      (to-alist (cdr list) (+ 1 n)))
-      nil))
-  (completing-read p (to-alist l 0) nil t))
+  (completing-read p (quilt-to-alist l 0) nil t))
+
+(defun quilt-editable-1 (file dirs qd)
+  (if (car dirs)
+      (if (file-exists-p (concat qd ".pc/" (car dirs) "/" file))
+	  't
+	(quilt-editable-1 file (cdr dirs) qd))
+    nil))
 
 (defun quilt-editable (f)
   (let* ((qd (quilt-dir))
 	 (fn (quilt-drop-dir f)))
-    (defun editable (file dirs)
-      (if (car dirs)
-	  (if (file-exists-p (concat qd ".pc/" (car dirs) "/" file))
-	      't
-	    (editable file (cdr dirs)))
-	nil))
-    (editable fn (if quilt-edit-top-only
-		     (list (quilt-top-patch))
-		     (cdr (cdr (directory-files (concat qd ".pc/"))))))))
+    (quilt-editable-1 fn
+		      (if quilt-edit-top-only
+			  (list (quilt-top-patch))
+			(cdr (cdr (directory-files (concat qd ".pc/")))))
+		      qd)))
 
 (defun quilt-short-patchname ()
   (let* ((p (quilt-top-patch)))
@@ -110,21 +114,23 @@
 	(concat " Q:" (quilt-short-patchname)))
   (force-mode-line-update))
 
+(defun quilt-revert-1 (buf)
+  (save-excursion
+    (set-buffer buf)
+    (if (quilt-owned-p buffer-file-name)
+	(quilt-update-modeline))
+    (if (and (quilt-owned-p buffer-file-name)
+	     (not (buffer-modified-p)))
+	(revert-buffer 't 't))))
+
+(defun quilt-revert-list (buffers)
+  (if (not (cdr buffers))
+      nil
+    (quilt-revert-1 (car buffers))
+    (quilt-revert-list (cdr buffers))))
+
 (defun quilt-revert ()
-  (defun revert (buf)
-    (save-excursion
-      (set-buffer buf)
-      (if (quilt-owned-p buffer-file-name)
-	  (quilt-update-modeline))
-      (if (and (quilt-owned-p buffer-file-name)
-	       (not (buffer-modified-p)))
-	  (revert-buffer 't 't))))
-  (defun revert-list (buffers)
-    (if (not (cdr buffers))
-	nil
-      (revert (car buffers))
-      (revert-list (cdr buffers))))
-  (revert-list (buffer-list)))
+  (quilt-revert-list (buffer-list)))
 
 (defun quilt-push (arg)
   "Push next patch, force with prefix arg"
